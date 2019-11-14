@@ -42,6 +42,9 @@
   <ItemGroup>
     <Compile Include="ArrayExt.cs" />
     <Compile Include="Client\ClientNetObjectHandler.cs" />
+    <Compile Include="Extras\FastBitConverter.cs" />
+    <Compile Include="Extras\NetDataReader.cs" />
+    <Compile Include="Extras\NetDataWriter.cs" />
     <Compile Include="Extras\RoundBased.cs" />
     <Compile Include="Helper\NetHelper.cs" />
     <Compile Include="Helper\MemberInfoExt.cs" />

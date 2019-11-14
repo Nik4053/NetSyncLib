@@ -112,7 +112,7 @@ namespace NetSyncLib
         public static void TrySendNetUpdate(this INetObject obj, NetDataWriter writer, NetSynchronizeDeliveryMethod deliveryMethod, IEnumerable<NetPeer> sendTo = null)
         {
             if (!NetOrganisator.IsServer()) return;
-            ClientNetPacketTypes.SendUpdateINetObject(obj, writer, deliveryMethod);
+            ClientNetPacketTypes.SendUpdateINetObject(obj, writer, deliveryMethod,sendTo);
         }
     }
 }

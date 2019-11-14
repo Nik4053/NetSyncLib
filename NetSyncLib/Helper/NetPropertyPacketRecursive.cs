@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiteNetLib.Utils;
+using System;
 using System.Reflection;
 
 namespace NetSyncLib.Helper

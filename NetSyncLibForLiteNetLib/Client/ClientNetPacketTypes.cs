@@ -23,7 +23,7 @@ namespace NetSyncLibForLiteNetLib.Client
             peer.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
-        public static void ReadSetPeerId(NetPacketReader reader, NetPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadSetPeerId(NetDataReader reader, NetPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             int newId = reader.GetInt();
             if (NetOrganisator.NetPeerId != -2) Console.Error.WriteLine("Set peer id was called by the server but id was already set. " + $"OldId: {NetOrganisator.NetPeerId}, NewId: {newId}");
