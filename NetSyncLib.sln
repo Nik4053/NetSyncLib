@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSyncLibForLiteNetLib", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "LiteNetLib-0.8\LiteNetLib\LiteNetLib.csproj", "{B0A014E4-0392-4E35-AA42-8FB5A40417E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSyncLib.Tests", "NetSyncLib.Tests\NetSyncLib.Tests.csproj", "{18F00FE8-E7E0-4854-8D4B-2E9F8A611821}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0A014E4-0392-4E35-AA42-8FB5A40417E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F00FE8-E7E0-4854-8D4B-2E9F8A611821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F00FE8-E7E0-4854-8D4B-2E9F8A611821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F00FE8-E7E0-4854-8D4B-2E9F8A611821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F00FE8-E7E0-4854-8D4B-2E9F8A611821}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

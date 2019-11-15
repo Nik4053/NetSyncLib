@@ -1,5 +1,6 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
+using NetSyncLib.NetLibInterfaces;
 using System.Collections.Generic;
 
 namespace NetSyncLib
@@ -11,7 +12,7 @@ namespace NetSyncLib
         /// Packet id has to be included into the writer from inside this method.
         /// </summary>
         /// <param name="sendTo">The clients to send this update to. If null it will be sent to everybody. If no content given data will not be send.</param>
-        void NetServerSendUpdate(IEnumerable<NetPeer> sendTo = null);
+        void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null);
 
         void NetClientReceiveUpdate(NetDataReader reader);
 

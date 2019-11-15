@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using NetSyncLib.Helper;
 using NetSyncLib.Impl;
+using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib
 {
@@ -80,12 +82,12 @@ namespace NetSyncLib
             return this.Spectators.Join(peerId) != -1;
         }
 
-        public bool JoinLobby(NetPeer peer)
+        public bool JoinLobby(IPeer peer)
         {
             return this.JoinLobby(peer.Id);
         }
 
-        public void ExitLobby(NetPeer peer)
+        public void ExitLobby(IPeer peer)
         {
             this.ExitLobby(peer.Id);
         }
@@ -127,7 +129,7 @@ namespace NetSyncLib
             return peers.Contains(peer);
         }
 
-        public bool SwitchTeam(NetPeer peer, NetLobbyTeam newTeam, int newPosition = -1)
+        public bool SwitchTeam(IPeer peer, NetLobbyTeam newTeam, int newPosition = -1)
         {
             return this.SwitchTeam(peer.Id, newTeam, newPosition);
         }
@@ -245,7 +247,7 @@ namespace NetSyncLib
 
         // private List<(int, int)> teamMemberUpdates;
         // private List<(int, string)> teamNameUpdates;
-        public override void NetServerSendUpdate(IEnumerable<NetPeer> sendTo = null)
+        public override void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null)
         {
             this.PrintLobby();
             NetDataWriter writer = new NetDataWriter();
@@ -259,7 +261,7 @@ namespace NetSyncLib
                 throw new NotImplementedException();
             }
 
-            this.TrySendNetUpdate(writer, NetSynchronizeDeliveryMethod.ReliableOrdered, sendTo);
+            this.TrySendNetUpdate(writer, NetSyncDeliveryMethod.ReliableOrdered, sendTo);
 
             // this.teamMemberUpdates.Clear();
             // this.teamNameUpdates.Clear();
@@ -323,7 +325,7 @@ namespace NetSyncLib
             return st;
         }
 
-        protected override void OnReceiveStatus(NetDataReader reader, NetPeer sender)
+        protected override void OnReceiveStatus(NetDataReader reader, IPeer sender)
         {
             this.SwitchTeam(sender, this.GetTeamWithId(reader.GetInt()), reader.GetInt());
         }

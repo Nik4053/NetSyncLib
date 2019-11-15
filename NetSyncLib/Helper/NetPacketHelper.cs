@@ -128,13 +128,13 @@ namespace NetSyncLib.Helper
         public struct NetPacketHelperUpdate
         {
             public readonly bool Changes;
-            public readonly NetSyncDeliveryMethod NetSynchronizeDeliveryMethod;
+            public readonly NetSyncDeliveryMethod NetSyncDeliveryMethod;
             public readonly NetDataWriter Writer;
 
             internal NetPacketHelperUpdate(bool changes, NetSyncDeliveryMethod deliveryMethod, NetDataWriter writer)
             {
                 this.Changes = changes;
-                this.NetSynchronizeDeliveryMethod = deliveryMethod;
+                this.NetSyncDeliveryMethod = deliveryMethod;
                 this.Writer = writer;
             }
         }
@@ -169,7 +169,7 @@ namespace NetSyncLib.Helper
             foreach (NetPropertyPacket pp in this.propertyPackets)
             {
                 NetDataWriter writer;
-                switch (pp.Attribute.NetSynchronizeDeliveryMethod)
+                switch (pp.Attribute.NetSyncDeliveryMethod)
                 {
                     case NetSyncDeliveryMethod.ReliableOrdered:
                         writer = reliableOrderedWriter;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using NetSyncLib.Helper;
+using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib.Impl
 {
@@ -45,7 +46,7 @@ namespace NetSyncLib.Impl
             this.netPacketHelper.ReceiveUpdate(reader);
         }
 
-        public sealed override void NetServerSendUpdate(IEnumerable<NetPeer> sendTo = null)
+        public sealed override void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null)
         {
             if (NetOrganisator.IsServer())
             {

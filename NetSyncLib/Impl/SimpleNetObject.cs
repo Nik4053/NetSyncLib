@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib.Impl
 {
@@ -53,7 +54,7 @@ namespace NetSyncLib.Impl
 
         public abstract void NetClientReceiveUpdate(NetDataReader reader);
 
-        public abstract void NetServerSendUpdate(IEnumerable<NetPeer> sendTo = null);
+        public abstract void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null);
 
         public abstract void Serialize(NetDataWriter writer);
     }

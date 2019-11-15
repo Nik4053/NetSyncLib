@@ -46,6 +46,7 @@
     <Compile Include="Client\ClientListener.cs" />
     <Compile Include="Client\ClientNetPacketTypes.cs" />
     <Compile Include="Listener\NetEventBasedNetListener.cs" />
+    <Compile Include="NetLobby.cs" />
     <Compile Include="NetOrganisator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\ServerListener.cs" />

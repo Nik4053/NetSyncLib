@@ -2,6 +2,7 @@
 using LiteNetLib;
 using LiteNetLib.Utils;
 using NetSyncLib.Helper;
+using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib.Impl
 {
@@ -71,7 +72,7 @@ namespace NetSyncLib.Impl
             }
         }
 
-        public void NetServerReceiveUpdate(NetPeer clientPeer, NetDataReader reader)
+        public void NetServerReceiveUpdate(IPeer clientPeer, NetDataReader reader)
         {
             if (NetOrganisator.NetState == ENetState.Server)
             {
@@ -101,7 +102,7 @@ namespace NetSyncLib.Impl
         /// <summary>
         /// Server receives status and checks.
         /// </summary>
-        protected abstract void OnReceiveStatus(NetPeer clientPeer, NetDataReader reader);
+        protected abstract void OnReceiveStatus(IPeer clientPeer, NetDataReader reader);
 
         /// <summary>
         /// Client sends status to server.

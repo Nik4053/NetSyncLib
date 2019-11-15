@@ -1,6 +1,7 @@
 ﻿using System;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib
 {
@@ -32,7 +33,7 @@ namespace NetSyncLib
         /// Server receives status and checks.
         /// </summary>
         /// <param name="clientPeer">The client that send the message.</param>
-        void NetServerReceiveUpdate(NetPeer clientPeer, NetDataReader reader);
+        void NetServerReceiveUpdate(IPeer clientPeer, NetDataReader reader);
 
         /// <summary>
         /// Returns true if the given peerId has the rights to change this controller.

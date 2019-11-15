@@ -21,7 +21,7 @@ namespace NetSyncLib.Helper
         public NetSynchronizeAttribute(int updateFrequency = 0, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             this.UpdateFrequency = updateFrequency;
-            this.NetSynchronizeDeliveryMethod = deliveryMethod;
+            this.NetSyncDeliveryMethod = deliveryMethod;
         }
 
         /// <summary>
@@ -29,6 +29,6 @@ namespace NetSyncLib.Helper
         /// </summary>
         public int UpdateFrequency { get; set; }
 
-        public NetSyncDeliveryMethod NetSynchronizeDeliveryMethod { get; set; }
+        public NetSyncDeliveryMethod NetSyncDeliveryMethod { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetSyncLib.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace NetSyncLib.NetLibInterfaces
 {
-    interface IPeer
+    public interface IPeer
     {
+        ushort Id { get; }
         string Name { get; }
-        void Send<T>(T value);
+        void Send<T>(T value, NetSyncDeliveryMethod deliveryMethod);
         void Recieve();
     }
 }
