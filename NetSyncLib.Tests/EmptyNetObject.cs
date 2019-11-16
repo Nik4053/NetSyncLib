@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiteNetLib.Utils;
+using NetSyncLib.Helper;
 using NetSyncLib.Impl;
 
 namespace NetSyncLib.Tests
@@ -13,7 +13,8 @@ namespace NetSyncLib.Tests
         public EmptyNetObject()
         {
         }
-
+        [NetSynchronize]
+        internal int testInt = 12345;
         ~EmptyNetObject()
         {
             //ReleaseUnmanagedResources();

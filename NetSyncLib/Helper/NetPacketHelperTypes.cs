@@ -26,7 +26,7 @@ namespace NetSyncLib.Helper
 
         public abstract class NetValueHandler
         {
-            public abstract NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute);
+            public abstract NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute, object initVal = default);
         }
 
         public class NetValueHandler<TValueType> : NetValueHandler
@@ -40,9 +40,9 @@ namespace NetSyncLib.Helper
                 this.Receiver = receiver;
             }
 
-            public override NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute)
+            public override NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute, object initValue= default)
             {
-                return new NetPropertyPacket<TValueType>(tag, propertyInfo, attribute, this);
+                return new NetPropertyPacket<TValueType>(tag, propertyInfo, attribute, this, (TValueType)initValue);
             }
 
             public override string ToString()

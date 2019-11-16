@@ -7,7 +7,7 @@ namespace NetSyncLib.Server
     internal class ServerWeakNetObjectHandler<TKey>
         where TKey : class
     {
-        private const int RecycleThreshold = 100;
+        internal const int RecycleThreshold = 100;
 
         /// <summary>
         /// List containing ids that have been recycled and are ready to be used again.

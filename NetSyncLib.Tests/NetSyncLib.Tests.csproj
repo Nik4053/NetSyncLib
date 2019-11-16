@@ -64,10 +64,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LiteNetLib-0.8\LiteNetLib\LiteNetLib.csproj">
-      <Project>{B0A014E4-0392-4E35-AA42-8FB5A40417E0}</Project>
-      <Name>LiteNetLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NetSyncLib\NetSyncLib.csproj">
       <Project>{658dafd0-e956-4129-b611-3717ecd6dbe0}</Project>
       <Name>NetSyncLib</Name>

@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LiteNetLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NetSyncLib.Client;
+using NetSyncLib.Helper;
 using NetSyncLib.Server;
+using NetSyncLibForLiteNetLib.Client;
 
 namespace NetSyncLib.Tests.ServerTests
 {
@@ -15,6 +19,27 @@ namespace NetSyncLib.Tests.ServerTests
         [TestMethod]
         public void TestRegister()
         {
+            NetOrganisator.ResetNet();
+            NetOrganisator.StartAsServer();
+            EmptyNetObject netObject = new EmptyNetObject();
+            netObject.testInt = 9876;
+            netObject.Register();
+            Byte[] data = NetOrganisator.TESTDATA;
+            ushort id = NetOrganisator.ServerNetObjectHandler[netObject];
+            netObject.testInt = -6789;
+            netObject.NetServerSendUpdate();
+            Byte[] data2 = NetOrganisator.TESTDATA;
+            NetOrganisator.ResetNet();
+            NetOrganisator.StartAsClient();
+            ClientListener listener = new ClientListener();
+            listener.OnNetworkReceiveEvent(null, new NetDataReader(data), NetSyncDeliveryMethod.ReliableOrdered);
+            INetObject netObject2 = null;
+            NetOrganisator.ClientNetObjectHandler.NetObjects.TryGetValue(id,out netObject2);
+            Assert.AreEqual(9876, ((EmptyNetObject)netObject2).testInt);
+            listener.OnNetworkReceiveEvent(null, new NetDataReader(data2), NetSyncDeliveryMethod.ReliableOrdered);
+            Assert.AreEqual(-6789, ((EmptyNetObject)netObject2).testInt);
+
+
 
         }
         [TestMethod]
@@ -69,13 +94,17 @@ namespace NetSyncLib.Tests.ServerTests
         public void CheckKeyReuse()
         {
             ServerWeakNetObjectHandler<INetObject> handler = new ServerWeakNetObjectHandler<INetObject>();
-            INetObject netObject = new EmptyNetObject();
-            handler.AddObject(netObject);
-            ushort id = handler[netObject];
-            handler.RemoveObject(netObject);
-            netObject = new EmptyNetObject();
-            handler.AddObject(netObject);
-            if (id != handler[netObject]) Assert.Fail($"Key should have been the same but wasn't. OldKey: {id} NewKey: {handler[netObject]}");
+            for (int i = 0; i < ServerWeakNetObjectHandler<INetObject>.RecycleThreshold+1; i++)
+            {
+                INetObject netObject = new EmptyNetObject();
+                handler.AddObject(netObject);
+                ushort id = handler[netObject];
+                if (i+1 != id) Assert.Fail($"Key should have been the same but wasn't. Expected: {i} Was: {id}");
+                handler.RemoveObject(netObject);
+            }
+            INetObject finalObject = new EmptyNetObject();
+            handler.AddObject(finalObject);
+            if (1 != handler[finalObject]) Assert.Fail($"Key should have been the same but wasn't. OldKey: {1} NewKey: {handler[finalObject]}");
         }
     }
 }

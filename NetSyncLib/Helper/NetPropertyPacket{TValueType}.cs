@@ -14,9 +14,10 @@ namespace NetSyncLib.Helper
     {
         private readonly NetPacketHelperTypes.NetValueHandler<TValueType> netValueHandler;
 
-        public NetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute, NetPacketHelperTypes.NetValueHandler<TValueType> netValueHandler) : base(tag, propertyInfo, attribute)
+        public NetPropertyPacket( ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute, NetPacketHelperTypes.NetValueHandler<TValueType> netValueHandler, TValueType initValue = default(TValueType)) : base(tag, propertyInfo, attribute)
         {
             this.netValueHandler = netValueHandler;
+            this.TypedValue = initValue;
         }
 
         public TValueType TypedValue { get; private set; }

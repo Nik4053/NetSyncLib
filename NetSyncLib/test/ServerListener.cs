@@ -3,6 +3,10 @@ using NetSyncLibForLiteNetLib.Client;
 using NetSyncLibForLiteNetLib.Listener;
 using System;
 using System.Collections.Generic;
+using NetSyncLib.Server;
+using NetSyncLib.NetLibInterfaces;
+using NetSyncLib.Client;
+using NetSyncLib;
 
 namespace NetSyncLibForLiteNetLib.Server
 {
@@ -18,15 +22,6 @@ namespace NetSyncLibForLiteNetLib.Server
             AddReceiveTypes();
         }
 
-        public override void AddDefaultEvents()
-        {
-            base.AddDefaultEvents();
-            PeerConnectedEvent -= OnPeerConnectedEvent;
-            PeerConnectedEvent += OnPeerConnectedEvent;
-            ConnectionRequestEvent -= OnConnectionRequestEvent;
-            ConnectionRequestEvent += OnConnectionRequestEvent;
-        }
-
         private void AddReceiveTypes()
         {
             NetworkReceiveTypes.Add(ServerNetPacketTypes.TypeUpdateController, ServerNetPacketTypes.ReadUpdateController);
@@ -34,11 +29,11 @@ namespace NetSyncLibForLiteNetLib.Server
             NetworkReceiveTypes.Add(ServerNetPacketTypes.TypeCloneAll, ServerNetPacketTypes.ReadCloneAll);
         }
 
-        private void OnPeerConnectedEvent(NetPeer peer)
+        private void OnPeerConnectedEvent(IPeer peer)
         {
-            Console.WriteLine("Server: We got connection: {0}, Id will be: {1}", peer.EndPoint, peer.Id);
+            //Console.WriteLine("Server: We got connection: {0}, Id will be: {1}", peer.EndPoint, peer.Id);
             ClientNetPacketTypes.SendSetPeerId(peer.Id, peer);
-            NetOrganisator.ResendAllNetObjects(new List<NetPeer> { peer });
+            NetOrganisator.ResendAllNetObjects(new List<IPeer> { peer });
         }
     }
 }

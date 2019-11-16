@@ -55,155 +55,40 @@ namespace NetSyncLib
                 ClientNetPacketTypes.SendCreateINetObject(obj, peers);
             }
         }
-        internal static void SendToServer(NetDataWriter writer, NetSyncDeliveryMethod options)
-        {
-            Manager.FirstPeer.Send(writer, (LiteNetLib.DeliveryMethod)options);
-        }
-    }
-    public static class NetOrganisator2
-    {
-        public static NetEventBasedNetListener EventListener { get; private set; }
-
-        public static NetManager Manager { get; private set; }
-
-
-
-        public static void UpdateNet()
-        {
-            if (NetState != ENetState.Offline)
-                Manager.PollEvents();
-        }
-
-        public static bool StartClient(string address = "localhost", int port = 9050, string password = "", string username = "UnknownPlayer", bool autoUpdate = true)
-        {
-            if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Client while there is an active connection of Type: " + NetState);
-            ClientListener listener = new ClientListener();
-            NetManager client = new NetManager(listener);
-            client.Start();
-            NetDataWriter conWriter = new NetDataWriter();
-            conWriter.Put(username.Trim());
-            conWriter.Put(password);
-            NetPeer connection = client.Connect(address, port, conWriter);
-            while (connection.ConnectionState == ConnectionState.Outcoming)
-            {
-                client.PollEvents();
-
-                // Console.WriteLine("Client: listening...");
-                Thread.Sleep(15);
-            }
-
-            if (connection.ConnectionState != ConnectionState.Connected)
-            {
-                Console.WriteLine("Cannot find server. Returning...");
-                ResetNet();
-                return false;
-            }
-
-            EventListener = listener;
-            Manager = client;
-            NetState = ENetState.Client;
-            ClientNetObjectHandler = new ClientNetObjectHandler<INetObject>();
-            if (autoUpdate)
-            {
-                new Thread(() =>
-                {
-                    while (!Console.KeyAvailable)
-                    {
-                        //client.PollEvents();
-                        UpdateNet();
-                        Thread.Sleep(5);
-                    }
-
-                    Console.WriteLine("Disconnected from Server");
-                    client.Stop();
-                    ResetNet(); // TODO reset net not called when auto-update = false
-                }).Start();
-            }
-
-            return true;
-        }
-
-        public static void StartServer(string addressIPv4 = null, string addressIPv6 = null, int port = 9050, string password = "", int maxConnections = 10, bool autoUpdate = true)
-        {
-            if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
-            ServerListener listener = new ServerListener(password, maxConnections);
-            NetManager server = new NetManager(listener);
-            IPAddress ipv4;
-            if (addressIPv4 != null)
-            {
-                ipv4 = NetUtils.ResolveAddress(addressIPv4);
-            }
-            else
-            {
-                ipv4 = IPAddress.Any;
-            }
-
-            IPAddress ipv6;
-            if (addressIPv6 != null)
-            {
-                ipv6 = NetUtils.ResolveAddress(addressIPv6);
-            }
-            else
-            {
-                ipv6 = IPAddress.IPv6Any;
-            }
-
-            if (server.Start(ipv4, ipv6, port))
-            {
-                EventListener = listener;
-                Manager = server;
-                NetState = ENetState.Server;
-                ServerNetObjectHandler = new ServerWeakNetObjectHandler<INetObject>();
-                ControllerServerHandler = new NetControllerServerHandler();
-                NetPeerId = -1;
-            }
-            server.SimulateLatency = true;
-            server.SimulationMaxLatency = 1000;
-
-            server.SimulationMinLatency = 1000;
-            // serverThread
-            new Thread(() =>
-            {
-                ulong bytesSend = 0;
-                ulong packetsSend = 0;
-                while (!Console.KeyAvailable)
-                {
-                    ulong newBytesSend = Manager.Statistics.BytesSent;
-                    ulong newPacketsSend = Manager.Statistics.PacketsSent;
-                    Console.WriteLine($"Send: {newBytesSend - bytesSend} Bytes/s, {newPacketsSend - packetsSend} Packages/s, {Manager.Statistics.PacketLossPercent}% PacketLoss");
-                    bytesSend = newBytesSend;
-                    packetsSend = newPacketsSend;
-                    Thread.Sleep(1000);
-                }
-            }).Start();
-            if (autoUpdate)
-            {
-                new Thread(() =>
-                {
-                    while (!Console.KeyAvailable)
-                    {
-                        server.PollEvents();
-                        Thread.Sleep(5);
-                    }
-
-                    Console.WriteLine("Stopping Server...");
-                    server.Stop();
-                    ResetNet();
-                }).Start();
-            }
-        }
-
        
-        private static void ResetNet()
+
+        public static void StartAsServer() {
+            if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
+            NetState = ENetState.Server;
+            ServerNetObjectHandler = new ServerWeakNetObjectHandler<INetObject>();
+            ControllerServerHandler = new NetControllerServerHandler();
+            NetPeerId = -1;
+        }
+
+        public static void ResetNet()
         {
             NetState = ENetState.Offline;
-            Manager = null;
             NetPeerId = -2;
-            EventListener = null;
             ClientNetObjectHandler = null;
             ServerNetObjectHandler = null;
         }
+        public static void StartAsClient() {
+            if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
+            NetState = ENetState.Client;
+            ClientNetObjectHandler = new ClientNetObjectHandler<INetObject>();
+           
+        }
 
+
+
+        internal static void SendToServer(NetDataWriter writer, NetSyncDeliveryMethod options)
+        {
+            TESTDATA = writer.CopyData();
+            Console.WriteLine($"OPTION: {options} \n DATA: " + writer.Data);
+            //Manager.FirstPeer.Send(writer, (LiteNetLib.DeliveryMethod)options);
+        }
+
+        internal static Byte[] TESTDATA;
         /// <summary>
         /// Will send data to the given peers. Leaving <see cref="sendTo"/> == null will be the same as calling <see cref="SendToAll"/>.
         /// </summary>
@@ -212,6 +97,8 @@ namespace NetSyncLib
         /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody. If no content given data will not be send.</param>
         public static void Send(NetDataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
         {
+            TESTDATA = writer.CopyData();
+            return;
             if (sendTo == null)
             {
                 SendToAll(writer, options);
@@ -226,6 +113,8 @@ namespace NetSyncLib
 
         public static void SendToAll(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
+            TESTDATA = writer.CopyData();
+            return;
             switch (NetState)
             {
                 case ENetState.Server:
@@ -242,23 +131,8 @@ namespace NetSyncLib
 
         internal static void SendToAllClients(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
-            Manager.SendToAll(writer, (LiteNetLib.DeliveryMethod)options);
+            TESTDATA = writer.CopyData();
+            //Manager.SendToAll(writer, options);
         }
-
-     
-
-        public static void UpdateAllNetObjects()
-        {
-            if (NetState != ENetState.Server) return;
-
-            // TODO UpdateAllNetObjects
-            List<INetObject> netObjectList = ServerNetObjectHandler.GetAllKeys();
-            foreach (INetObject obj in netObjectList)
-            {
-                obj.NetServerSendUpdate();
-            }
-        }
-
-
     }
 }

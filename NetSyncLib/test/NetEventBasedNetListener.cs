@@ -17,7 +17,7 @@ namespace NetSyncLibForLiteNetLib.Listener
             
         }
 
-        private void OnNetworkReceiveEvent(IPeer peer, NetDataReader reader, NetSyncDeliveryMethod deliveryMethod)
+        internal void OnNetworkReceiveEvent(IPeer peer, NetDataReader reader, NetSyncDeliveryMethod deliveryMethod)
         {
             byte packetType = reader.GetByte();
             if (NetworkReceiveTypes.TryGetValue(packetType, out NetReceiveType receiveType))

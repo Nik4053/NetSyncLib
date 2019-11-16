@@ -83,7 +83,7 @@ namespace NetSyncLib.Helper
                     }
 
                     object val = memberInfo.GetValue(observedObject);
-                    NetPropertyPacket netPropertyPacket = this.CreateNetPropertyPacket(1UL << pP.Count, memberInfo, (NetSynchronizeAttribute)customAttributes[0]);
+                    NetPropertyPacket netPropertyPacket = this.CreateNetPropertyPacket(1UL << pP.Count, memberInfo, (NetSynchronizeAttribute)customAttributes[0],val);
                     if (netPropertyPacket is NetPropertyPacketRecursive netPropertyPacketRecursive)
                     {
                         pPR.Add(netPropertyPacketRecursive);
@@ -108,16 +108,16 @@ namespace NetSyncLib.Helper
         private NetPropertyPacket[] propertyPackets;
         private NetPropertyPacketRecursive[] propertyPacketsRecursives;
 
-        private NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute)
+        private NetPropertyPacket CreateNetPropertyPacket(ulong tag, MemberInfo propertyInfo, NetSynchronizeAttribute attribute, object initVal = default)
         {
             if (typeof(INetObject).IsAssignableFrom(propertyInfo.GetUnderlyingType()))
             {
                 NetPacketHelperTypes.Handlers.TryGetValue(typeof(INetObject), out NetPacketHelperTypes.NetValueHandler netObjHandler);
-                return netObjHandler.CreateNetPropertyPacket(tag, propertyInfo, attribute);
+                return netObjHandler.CreateNetPropertyPacket(tag, propertyInfo, attribute,initVal);
             }
             else if (NetPacketHelperTypes.Handlers.TryGetValue(propertyInfo.GetUnderlyingType(), out NetPacketHelperTypes.NetValueHandler valueHandler))
             {
-                return valueHandler.CreateNetPropertyPacket(tag, propertyInfo, attribute);
+                return valueHandler.CreateNetPropertyPacket(tag, propertyInfo, attribute,initVal);
             }
             else
             {
