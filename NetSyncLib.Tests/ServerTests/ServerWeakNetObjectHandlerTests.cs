@@ -20,15 +20,16 @@ namespace NetSyncLib.Tests.ServerTests
         public void TestRegister()
         {
             NetOrganisator.ResetNet();
-            NetOrganisator.StartAsServer();
+            NetOrganisator.StartAsServer(DelayedReaderHandler.ReaderHandler);
             EmptyNetObject netObject = new EmptyNetObject();
             netObject.testInt = 9876;
             netObject.Register();
-            Byte[] data = NetOrganisator.TESTDATA;
+            Byte[] data = DelayedReaderHandler.Read();
             ushort id = NetOrganisator.ServerNetObjectHandler[netObject];
             netObject.testInt = -6789;
             netObject.NetServerSendUpdate();
-            Byte[] data2 = NetOrganisator.TESTDATA;
+            Byte[] data2 = DelayedReaderHandler.Read();
+
             NetOrganisator.ResetNet();
             NetOrganisator.StartAsClient();
             ClientListener listener = new ClientListener();

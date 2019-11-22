@@ -13,7 +13,7 @@ namespace NetSyncLib.Tests
         [TestMethod]
         public void StartServerTest()
         {
-            NetOrganisator.StartAsServer();
+            NetOrganisator.StartAsServer(null);
             NetOrganisator.ResetNet();
         }
     }

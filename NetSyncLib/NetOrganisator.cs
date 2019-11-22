@@ -1,17 +1,10 @@
-﻿using LiteNetLib;
-using LiteNetLib.Utils;
-using NetSyncLib;
+﻿using LiteNetLib.Utils;
 using NetSyncLib.Client;
 using NetSyncLib.Helper;
 using NetSyncLib.NetLibInterfaces;
 using NetSyncLib.Server;
-using NetSyncLibForLiteNetLib.Client;
-using NetSyncLibForLiteNetLib.Listener;
-using NetSyncLibForLiteNetLib.Server;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading;
 
 namespace NetSyncLib
 {
@@ -23,13 +16,14 @@ namespace NetSyncLib
         /// </summary>
         public static int NetPeerId { get; internal set; } = -2;
 
-
         public static ENetState NetState { get; private set; } = ENetState.Offline;
+
         internal static ClientNetObjectHandler<INetObject> ClientNetObjectHandler { get; private set; }
 
         internal static NetControllerServerHandler ControllerServerHandler { get; private set; }
 
         internal static ServerWeakNetObjectHandler<INetObject> ServerNetObjectHandler { get; private set; }
+
         /// <summary>
         /// Wrapper for <see cref="NetState"/> == <see cref="ENetState.Server"/>.
         /// </summary>
@@ -43,6 +37,7 @@ namespace NetSyncLib
         {
             return NetState == ENetState.Client;
         }
+
         public static void ResendAllNetObjects(List<IPeer> peers = null)
         {
             if (NetState != ENetState.Server) return;
@@ -55,11 +50,13 @@ namespace NetSyncLib
                 ClientNetPacketTypes.SendCreateINetObject(obj, peers);
             }
         }
-       
-
-        public static void StartAsServer() {
+        public delegate void OutputHandler(byte[] data);
+        public static OutputHandler outputHandler;
+        public static void StartAsServer(OutputHandler handler)
+        {
             if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
             NetState = ENetState.Server;
+            outputHandler = handler;
             ServerNetObjectHandler = new ServerWeakNetObjectHandler<INetObject>();
             ControllerServerHandler = new NetControllerServerHandler();
             NetPeerId = -1;
@@ -72,23 +69,22 @@ namespace NetSyncLib
             ClientNetObjectHandler = null;
             ServerNetObjectHandler = null;
         }
-        public static void StartAsClient() {
+
+        public static void StartAsClient()
+        {
             if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
             NetState = ENetState.Client;
             ClientNetObjectHandler = new ClientNetObjectHandler<INetObject>();
-           
         }
-
-
 
         internal static void SendToServer(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
-            TESTDATA = writer.CopyData();
+            outputHandler(writer.Data);
             Console.WriteLine($"OPTION: {options} \n DATA: " + writer.Data);
-            //Manager.FirstPeer.Send(writer, (LiteNetLib.DeliveryMethod)options);
+            // Manager.FirstPeer.Send(writer, (LiteNetLib.DeliveryMethod)options);
         }
 
-        internal static Byte[] TESTDATA;
+
         /// <summary>
         /// Will send data to the given peers. Leaving <see cref="sendTo"/> == null will be the same as calling <see cref="SendToAll"/>.
         /// </summary>
@@ -97,7 +93,8 @@ namespace NetSyncLib
         /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody. If no content given data will not be send.</param>
         public static void Send(NetDataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
         {
-            TESTDATA = writer.CopyData();
+
+            outputHandler(writer.Data);
             return;
             if (sendTo == null)
             {
@@ -113,7 +110,8 @@ namespace NetSyncLib
 
         public static void SendToAll(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
-            TESTDATA = writer.CopyData();
+
+            outputHandler(writer.Data); 
             return;
             switch (NetState)
             {
@@ -131,8 +129,21 @@ namespace NetSyncLib
 
         internal static void SendToAllClients(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
-            TESTDATA = writer.CopyData();
+
+            outputHandler(writer.Data);
             //Manager.SendToAll(writer, options);
+        }
+
+        public static void UpdateAllNetObjects()
+        {
+            if (NetState != ENetState.Server) return;
+
+            // TODO UpdateAllNetObjects
+            List<INetObject> netObjectList = ServerNetObjectHandler.GetAllKeys();
+            foreach (INetObject obj in netObjectList)
+            {
+                obj.NetServerSendUpdate();
+            }
         }
     }
 }
