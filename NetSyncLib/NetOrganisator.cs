@@ -85,15 +85,15 @@ namespace NetSyncLib
         /// <param name="writer"></param>
         /// <param name="options"></param>
         /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody.</param>
-        public static void Send(NetDataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
+        public static void Send(DataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
         {
             if (IsClient())
             {
-                outputHandler(writer.Data, options, null);
+                outputHandler(writer.CopyData(), options, null);
             }
             else if(IsServer())
             {
-                outputHandler(writer.Data, options, sendTo);
+                outputHandler(writer.CopyData(), options, sendTo);
             }
             else
             {

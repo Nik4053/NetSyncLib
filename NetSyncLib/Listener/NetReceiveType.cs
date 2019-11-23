@@ -4,5 +4,5 @@ using NetSyncLib.NetLibInterfaces;
 
 namespace NetSyncLib
 {
-    public delegate void NetReceiveType(NetDataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod);
+    public delegate void NetReceiveType(DataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod);
 }

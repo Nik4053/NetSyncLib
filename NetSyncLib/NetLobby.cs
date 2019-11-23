@@ -140,7 +140,7 @@ namespace NetSyncLib
             {
                 if (NetOrganisator.NetPeerId == peerId)
                 {
-                    NetDataWriter writer = new NetDataWriter();
+                    DataWriter writer = new DataWriter();
                     writer.Put(newTeam.TeamId);
                     writer.Put(newPosition);
                     this.TrySendNetControllerUpdate(writer);
@@ -216,7 +216,7 @@ namespace NetSyncLib
             this.NetServerSendUpdate();
         }
 
-        public override void Serialize(NetDataWriter writer)
+        public override void Serialize(DataWriter writer)
         {
             writer.Put(this.Spectators.TeamId);
             this.Spectators.Serialize(writer);
@@ -230,7 +230,7 @@ namespace NetSyncLib
             writer.Put(false);
         }
 
-        public override void Deserialize(NetDataReader reader)
+        public override void Deserialize(DataReader reader)
         {
             this.Spectators = new NetLobbyTeam(reader.GetInt(), reader);
             List<NetLobbyTeam> teams = new List<NetLobbyTeam>();
@@ -250,7 +250,7 @@ namespace NetSyncLib
         public override void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null)
         {
             this.PrintLobby();
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(this.resendAll);
             if (this.resendAll)
             {
@@ -267,7 +267,7 @@ namespace NetSyncLib
             // this.teamNameUpdates.Clear();
         }
 
-        public override void NetClientReceiveUpdate(NetDataReader reader)
+        public override void NetClientReceiveUpdate(DataReader reader)
         {
             if (reader.GetBool())
             {
@@ -325,7 +325,7 @@ namespace NetSyncLib
             return st;
         }
 
-        protected override void OnReceiveStatus(NetDataReader reader, IPeer sender)
+        protected override void OnReceiveStatus(DataReader reader, IPeer sender)
         {
             this.SwitchTeam(sender, this.GetTeamWithId(reader.GetInt()), reader.GetInt());
         }
@@ -364,7 +364,7 @@ namespace NetSyncLib
                 this.ChangeTeamSize(size);
             }
 
-            internal NetLobbyTeam(int teamId, NetDataReader deserializer)
+            internal NetLobbyTeam(int teamId, DataReader deserializer)
             {
                 this.TeamId = teamId;
                 this.Deserialize(deserializer);
@@ -455,13 +455,13 @@ namespace NetSyncLib
                 return toRemove;
             }
 
-            public void Serialize(NetDataWriter writer)
+            public void Serialize(DataWriter writer)
             {
                 writer.Put(this.Name);
                 writer.PutArray(this.Members);
             }
 
-            public void Deserialize(NetDataReader reader)
+            public void Deserialize(DataReader reader)
             {
                 this.Name = reader.GetString();
                 this.Members = reader.GetIntArray();

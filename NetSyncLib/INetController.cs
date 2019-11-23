@@ -33,7 +33,7 @@ namespace NetSyncLib
         /// Server receives status and checks.
         /// </summary>
         /// <param name="clientPeer">The client that send the message.</param>
-        void NetServerReceiveUpdate(IPeer clientPeer, NetDataReader reader);
+        void NetServerReceiveUpdate(IPeer clientPeer, DataReader reader);
 
         /// <summary>
         /// Returns true if the given peerId has the rights to change this controller.

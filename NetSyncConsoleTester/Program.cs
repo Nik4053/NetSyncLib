@@ -1,5 +1,9 @@
 ﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using NetSyncLib;
+using NetSyncLib.Helper;
+using NetSyncLib.Tests;
+using NetSyncLibForLiteNetLib.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,12 +27,15 @@ namespace NetSyncConsoleTester
             else
             {
                 Console.WriteLine("Starting as Client");
+                StartClient();
             }
+            while (true) { }
         }
 
         public static bool StartClient(string address = "localhost", int port = 9050, string password = "", string username = "UnknownPlayer", bool autoUpdate = true)
         {
-            INetEventListener listener = new EventBasedNetListener();
+            EventBasedNetListener listener = new EventBasedNetListener();
+            listener.NetworkReceiveEvent += Listener_NetworkReceiveEvent;
             NetManager client = new NetManager(listener);
             client.Start();
            
@@ -40,6 +47,11 @@ namespace NetSyncConsoleTester
 
                 // Console.WriteLine("Client: listening...");
                 Thread.Sleep(15);
+            }
+            if(connection.ConnectionState == ConnectionState.Disconnected)
+            {
+
+                Console.WriteLine("No Server Found");
             }
             if (autoUpdate)
             {
@@ -60,7 +72,8 @@ namespace NetSyncConsoleTester
         }
         public static void StartServer(string addressIPv4 = null, string addressIPv6 = null, int port = 9050, string password = "", int maxConnections = 10, bool autoUpdate = true)
         {
-            INetEventListener listener = new EventBasedNetListener();
+            EventBasedNetListener listener = new EventBasedNetListener();
+            listener.ConnectionRequestEvent += Listener_ConnectionRequestEvent;
             NetManager server = new NetManager(listener);
             IPAddress ipv4;
             if (addressIPv4 != null)
@@ -81,10 +94,11 @@ namespace NetSyncConsoleTester
             {
                 ipv6 = IPAddress.IPv6Any;
             }
-            server.SimulateLatency = true;
-            server.SimulationMaxLatency = 1000;
+            if (!server.Start(ipv4, ipv6, port))
+            {
+                Console.WriteLine("ERROR CREATING SERVER"); return;
+            }
 
-            server.SimulationMinLatency = 1000;
             NetOrganisator.StartAsServer(DelayedReaderHandler.ReaderHandler);
             // serverThread
             new Thread(() =>
@@ -95,7 +109,7 @@ namespace NetSyncConsoleTester
                 {
                     ulong newBytesSend = server.Statistics.BytesSent;
                     ulong newPacketsSend = server.Statistics.PacketsSent;
-                    Console.WriteLine($"Send: {newBytesSend - bytesSend} Bytes/s, {newPacketsSend - packetsSend} Packages/s, {Manager.Statistics.PacketLossPercent}% PacketLoss");
+                    Console.WriteLine($"Send: {newBytesSend - bytesSend} Bytes/s, {newPacketsSend - packetsSend} Packages/s, {server.Statistics.PacketLossPercent}% PacketLoss");
                     bytesSend = newBytesSend;
                     packetsSend = newPacketsSend;
                     Thread.Sleep(1000);
@@ -115,7 +129,43 @@ namespace NetSyncConsoleTester
                     server.Stop();
                     //ResetNet();
                 }).Start();
+                new Thread(() =>
+                {
+                    while (!Console.KeyAvailable)
+                    {
+                        byte[] data = DelayedReaderHandler.Read();
+                        Console.WriteLine("NEW DATA");
+                        server.SendToAll(data,DeliveryMethod.ReliableOrdered);
+
+                    }
+
+                    Console.WriteLine("Stopping Reader...");
+                    server.Stop();
+                    //ResetNet();
+                }).Start();
             }
+
+            EmptyNetObject netObject = new EmptyNetObject();
+            netObject.testInt = -4000;
+            netObject.Register();
+            char i = Console.ReadKey().KeyChar;
+            Console.WriteLine("RETURNING");
+
+            return;
+
+        }
+
+        private static void Listener_NetworkReceiveEvent(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        {
+            ClientListener listener2 = new ClientListener();
+            listener2.OnNetworkReceiveEvent(null,new DataReader(reader.RawData,reader.UserDataOffset),NetSyncDeliveryMethod.ReliableOrdered);
+        }
+
+        private static void Listener_ConnectionRequestEvent(ConnectionRequest request)
+        {
+            request.Accept();
+            Console.WriteLine("Accepted Request");
+            NetOrganisator.ResendAllNetObjects();
         }
     }
 }

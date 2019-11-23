@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace NetSyncLib.Helper
 {
-    public delegate TValueType ValueReceiver<TValueType>(NetDataReader reader);
+    public delegate TValueType ValueReceiver<TValueType>(DataReader reader);
 
-    public delegate void ValueSender<TValueType>(TValueType obj, NetDataWriter writer);
+    public delegate void ValueSender<TValueType>(TValueType obj, DataWriter writer);
 
     /// <summary>
     /// Packet containing all necessary information about a property/field.
@@ -34,7 +34,7 @@ namespace NetSyncLib.Helper
             return !newValue.Equals(this.TypedValue);
         }
 
-        public override bool TrySendUpdate(long time, object observedObject, NetDataWriter writer, bool resendAll = false)
+        public override bool TrySendUpdate(long time, object observedObject, DataWriter writer, bool resendAll = false)
         {
             if (!resendAll)
             {
@@ -47,7 +47,7 @@ namespace NetSyncLib.Helper
             return true;
         }
 
-        public override void ReceiveUpdate(object observedObject, NetDataReader reader)
+        public override void ReceiveUpdate(object observedObject, DataReader reader)
         {
             this.PropertyInfo.SetValue(observedObject, this.netValueHandler.Receiver(reader));
         }

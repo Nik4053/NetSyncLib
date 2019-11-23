@@ -7,7 +7,7 @@ namespace NetSyncLib
 {
     public static class INetControllerExt
     {
-        public static void TrySendNetControllerUpdate(this INetController obj, NetDataWriter writer, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.ReliableOrdered)
+        public static void TrySendNetControllerUpdate(this INetController obj, DataWriter writer, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.ReliableOrdered)
         {
             if (!NetOrganisator.IsClient()) return;
             if (obj.IsOwner())

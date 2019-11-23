@@ -15,9 +15,9 @@ namespace NetSyncLib.Server
         public const byte TypeUpdateController = 2;
         public const byte TypeTextMessage = 3;
 
-        public static void SendUpdateController(INetController netObject, NetDataWriter dataWriter, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.ReliableOrdered)
+        public static void SendUpdateController(INetController netObject, DataWriter dataWriter, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.ReliableOrdered)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeUpdateController);
             writer.Put(NetOrganisator.ClientNetObjectHandler.GetIdOfNetObject(netObject));
             writer.Put(netObject.OwnerId);
@@ -25,7 +25,7 @@ namespace NetSyncLib.Server
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
-        public static void ReadUpdateController(NetDataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadUpdateController(DataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             Console.Write("Getting controller update");
             ushort netId = reader.GetUShort();
@@ -42,13 +42,13 @@ namespace NetSyncLib.Server
 
         public static void SendMessage(string message)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeTextMessage);
             writer.Put(message);
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableUnordered);
         }
 
-        public static void ReadMessage(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadMessage(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             string message = reader.GetString();
             var name = peer.Id;
@@ -60,12 +60,12 @@ namespace NetSyncLib.Server
 
         public static void SendCloneAllRequest()
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeCloneAll);
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
-        public static void ReadCloneAll(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadCloneAll(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             NetOrganisator.ResendAllNetObjects(new List<IPeer> { peer });
         }

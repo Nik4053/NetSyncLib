@@ -20,12 +20,12 @@ namespace NetSyncLib.Helper
             this.netPacketHelper = new NetPacketHelper(this.Value); // propertyInfo.GetUnderlyingType());
         }
 
-        public override void ReceiveUpdate(object observedObject, NetDataReader reader)
+        public override void ReceiveUpdate(object observedObject, DataReader reader)
         {
             this.netPacketHelper.ReceiveUpdate(reader);
         }
 
-        public override bool TrySendUpdate(long time, object observedObject, NetDataWriter writer, bool resendAll = false)
+        public override bool TrySendUpdate(long time, object observedObject, DataWriter writer, bool resendAll = false)
         {
             throw new NotSupportedException();
         }

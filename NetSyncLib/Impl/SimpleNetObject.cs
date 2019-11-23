@@ -50,12 +50,12 @@ namespace NetSyncLib.Impl
             this.OnInitializeNetObject();
         }
 
-        public abstract void Deserialize(NetDataReader reader);
+        public abstract void Deserialize(DataReader reader);
 
-        public abstract void NetClientReceiveUpdate(NetDataReader reader);
+        public abstract void NetClientReceiveUpdate(DataReader reader);
 
         public abstract void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null);
 
-        public abstract void Serialize(NetDataWriter writer);
+        public abstract void Serialize(DataWriter writer);
     }
 }

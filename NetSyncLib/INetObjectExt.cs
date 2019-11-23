@@ -111,7 +111,7 @@ namespace NetSyncLib
         /// <param name="writer">The required header for the client to know to what netobject this data should go to will automatically be included. So don't include this data yourself!.</param>
         /// <param name="deliveryMethod"></param>
         /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody</param>
-        public static void TrySendNetUpdate(this INetObject obj, NetDataWriter writer, NetSyncDeliveryMethod deliveryMethod, IEnumerable<IPeer> sendTo = null)
+        public static void TrySendNetUpdate(this INetObject obj, DataWriter writer, NetSyncDeliveryMethod deliveryMethod, IEnumerable<IPeer> sendTo = null)
         {
             if (!NetOrganisator.IsServer()) return;
             ClientNetPacketTypes.SendUpdateINetObject(obj, writer, deliveryMethod,sendTo);

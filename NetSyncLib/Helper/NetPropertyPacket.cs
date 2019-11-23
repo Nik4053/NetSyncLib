@@ -47,8 +47,8 @@ namespace NetSyncLib.Helper
         /// <param name="writer"></param>
         /// <param name="resendAll">If true data will be written even if nothing changed since last time and even if it should not be allowed to update.</param>
         /// <returns>False if there was nothing to send and nothing was added to the reader.</returns>
-        public abstract bool TrySendUpdate(long time, object observedObject, NetDataWriter writer, bool resendAll = false);
+        public abstract bool TrySendUpdate(long time, object observedObject, DataWriter writer, bool resendAll = false);
 
-        public abstract void ReceiveUpdate(object observedObject, NetDataReader reader);
+        public abstract void ReceiveUpdate(object observedObject, DataReader reader);
     }
 }

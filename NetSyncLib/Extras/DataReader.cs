@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 
 namespace LiteNetLib.Utils
 {
-    public class NetDataReader
+    public class DataReader
     {
         protected byte[] _data;
         protected int _position;
@@ -56,7 +56,7 @@ namespace LiteNetLib.Utils
             _position += count;
         }
 
-        public void SetSource(NetDataWriter dataWriter)
+        public void SetSource(DataWriter dataWriter)
         {
             _data = dataWriter.Data;
             _position = 0;
@@ -88,22 +88,22 @@ namespace LiteNetLib.Utils
             _dataSize = maxSize;
         }
 
-        public NetDataReader()
+        public DataReader()
         {
 
         }
 
-        public NetDataReader(byte[] source)
+        public DataReader(byte[] source)
         {
             SetSource(source);
         }
 
-        public NetDataReader(byte[] source, int offset)
+        public DataReader(byte[] source, int offset)
         {
             SetSource(source, offset);
         }
 
-        public NetDataReader(byte[] source, int offset, int maxSize)
+        public DataReader(byte[] source, int offset, int maxSize)
         {
             SetSource(source, offset, maxSize);
         }

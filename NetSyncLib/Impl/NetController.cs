@@ -72,7 +72,7 @@ namespace NetSyncLib.Impl
             }
         }
 
-        public void NetServerReceiveUpdate(IPeer clientPeer, NetDataReader reader)
+        public void NetServerReceiveUpdate(IPeer clientPeer, DataReader reader)
         {
             if (NetOrganisator.NetState == ENetState.Server)
             {
@@ -102,7 +102,7 @@ namespace NetSyncLib.Impl
         /// <summary>
         /// Server receives status and checks.
         /// </summary>
-        protected abstract void OnReceiveStatus(IPeer clientPeer, NetDataReader reader);
+        protected abstract void OnReceiveStatus(IPeer clientPeer, DataReader reader);
 
         /// <summary>
         /// Client sends status to server.

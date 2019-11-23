@@ -36,7 +36,7 @@ namespace NetSyncLib.Impl
             // will init on deserialize
         }
 
-        public override void Deserialize(NetDataReader reader)
+        public override void Deserialize(DataReader reader)
         {
             string path = reader.GetString();
             this.synchronizedObject = NetHelper.CreateObject(path);
@@ -48,7 +48,7 @@ namespace NetSyncLib.Impl
             base.Deserialize(reader);
         }
 
-        public override void Serialize(NetDataWriter writer)
+        public override void Serialize(DataWriter writer)
         {
             writer.Put(this.synchronizedObject.GetType().AssemblyQualifiedName);
             if (this.synchronizedObject is INetSerializable ser)

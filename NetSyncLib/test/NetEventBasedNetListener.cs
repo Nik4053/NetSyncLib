@@ -17,7 +17,7 @@ namespace NetSyncLibForLiteNetLib.Listener
             
         }
 
-        internal void OnNetworkReceiveEvent(IPeer peer, NetDataReader reader, NetSyncDeliveryMethod deliveryMethod)
+        public void OnNetworkReceiveEvent(IPeer peer, DataReader reader, NetSyncDeliveryMethod deliveryMethod)
         {
             byte packetType = reader.GetByte();
             if (NetworkReceiveTypes.TryGetValue(packetType, out NetReceiveType receiveType))
@@ -26,7 +26,7 @@ namespace NetSyncLibForLiteNetLib.Listener
                 try
                 {
 #endif
-                receiveType((NetDataReader)reader, peer, deliveryMethod);
+                receiveType((DataReader)reader, peer, deliveryMethod);
 #if !DEBUG
                 }
                 catch (Exception e)

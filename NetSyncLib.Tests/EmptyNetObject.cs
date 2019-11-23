@@ -14,7 +14,7 @@ namespace NetSyncLib.Tests
         {
         }
         [NetSynchronize]
-        internal int testInt = 12345;
+        public int testInt = 12345;
         ~EmptyNetObject()
         {
             //ReleaseUnmanagedResources();

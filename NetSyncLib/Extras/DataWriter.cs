@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 
 namespace LiteNetLib.Utils
 {
-    internal class NetDataWriter
+    public class DataWriter
     {
         protected byte[] _data;
         protected int _position;
@@ -16,15 +16,15 @@ namespace LiteNetLib.Utils
             get { return _data.Length; }
         }
 
-        public NetDataWriter() : this(true, InitialSize)
+        public DataWriter() : this(true, InitialSize)
         {
         }
 
-        public NetDataWriter(bool autoResize) : this(autoResize, InitialSize)
+        public DataWriter(bool autoResize) : this(autoResize, InitialSize)
         {
         }
 
-        public NetDataWriter(bool autoResize, int initialSize)
+        public DataWriter(bool autoResize, int initialSize)
         {
             _data = new byte[initialSize];
             _autoResize = autoResize;
@@ -35,15 +35,15 @@ namespace LiteNetLib.Utils
         /// </summary>
         /// <param name="bytes">Source byte array</param>
         /// <param name="copy">Copy array to new location or use existing</param>
-        public static NetDataWriter FromBytes(byte[] bytes, bool copy)
+        public static DataWriter FromBytes(byte[] bytes, bool copy)
         {
             if (copy)
             {
-                var netDataWriter = new NetDataWriter(true, bytes.Length);
+                var netDataWriter = new DataWriter(true, bytes.Length);
                 netDataWriter.Put(bytes);
                 return netDataWriter;
             }
-            return new NetDataWriter(true, 0) {_data = bytes};
+            return new DataWriter(true, 0) {_data = bytes};
         }
 
         /// <summary>
@@ -52,16 +52,16 @@ namespace LiteNetLib.Utils
         /// <param name="bytes">Source byte array</param>
         /// <param name="offset">Offset of array</param>
         /// <param name="length">Length of array</param>
-        public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
+        public static DataWriter FromBytes(byte[] bytes, int offset, int length)
         {
-            var netDataWriter = new NetDataWriter(true, bytes.Length);
+            var netDataWriter = new DataWriter(true, bytes.Length);
             netDataWriter.Put(bytes, offset, length);
             return netDataWriter;
         }
 
-        public static NetDataWriter FromString(string value)
+        public static DataWriter FromString(string value)
         {
-            var netDataWriter = new NetDataWriter();
+            var netDataWriter = new DataWriter();
             netDataWriter.Put(value);
             return netDataWriter;
         }

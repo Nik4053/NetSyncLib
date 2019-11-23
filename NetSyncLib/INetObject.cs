@@ -14,12 +14,12 @@ namespace NetSyncLib
         /// <param name="sendTo">The clients to send this update to. If null it will be sent to everybody. If no content given data will not be send.</param>
         void NetServerSendUpdate(IEnumerable<IPeer> sendTo = null);
 
-        void NetClientReceiveUpdate(NetDataReader reader);
+        void NetClientReceiveUpdate(DataReader reader);
 
         /// <summary>
         /// Calling this method yourself is discouraged.
         /// Allows this INetObject to initialize before it gets registered. Will be called automatically on <see cref="INetObjectExt.TryRegister(INetObject)"/>, or <see cref="INetObjectExt.Register(INetObject)"/>.
-        /// Will only be called server-side. Use <see cref="INetSerializable.Deserialize(NetDataReader)"/> client-side.
+        /// Will only be called server-side. Use <see cref="INetSerializable.Deserialize(DataReader)"/> client-side.
         /// </summary>
         void InitializeNetObject();
     }

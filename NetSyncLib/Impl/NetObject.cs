@@ -32,12 +32,12 @@ namespace NetSyncLib.Impl
             base.OnInitializeNetObject();
         }
 
-        public override void Serialize(NetDataWriter writer)
+        public override void Serialize(DataWriter writer)
         {
             this.netPacketHelper.ResendAll(writer);
         }
 
-        public override void Deserialize(NetDataReader reader)
+        public override void Deserialize(DataReader reader)
         {
 #if DEBUG
             if (this.netPacketHelper != null) throw new InvalidOperationException("tried to deserialize net object thats netpackethelper has already been set");
@@ -68,7 +68,7 @@ namespace NetSyncLib.Impl
             }
         }
 
-        public sealed override void NetClientReceiveUpdate(NetDataReader reader)
+        public sealed override void NetClientReceiveUpdate(DataReader reader)
         {
             this.netPacketHelper.ReceiveUpdate(reader);
         }

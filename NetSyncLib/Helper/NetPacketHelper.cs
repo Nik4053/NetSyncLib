@@ -129,9 +129,9 @@ namespace NetSyncLib.Helper
         {
             public readonly bool Changes;
             public readonly NetSyncDeliveryMethod NetSyncDeliveryMethod;
-            public readonly NetDataWriter Writer;
+            public readonly DataWriter Writer;
 
-            internal NetPacketHelperUpdate(bool changes, NetSyncDeliveryMethod deliveryMethod, NetDataWriter writer)
+            internal NetPacketHelperUpdate(bool changes, NetSyncDeliveryMethod deliveryMethod, DataWriter writer)
             {
                 this.Changes = changes;
                 this.NetSyncDeliveryMethod = deliveryMethod;
@@ -139,9 +139,9 @@ namespace NetSyncLib.Helper
             }
         }
 
-        public void ResendAll(NetDataWriter writer)
+        public void ResendAll(DataWriter writer)
         {
-            NetDataWriter dataWriter = this.SendUpdate(true, false)[0].Writer;
+            DataWriter dataWriter = this.SendUpdate(true, false)[0].Writer;
             writer.Put(dataWriter.Data, 0, dataWriter.Length);
         }
 
@@ -154,9 +154,9 @@ namespace NetSyncLib.Helper
         public NetPacketHelperUpdate[] SendUpdate(bool resendAll = false, bool differSendTypes = true)
         {
             long time = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            NetDataWriter reliableWriter = new NetDataWriter();
-            NetDataWriter reliableOrderedWriter = new NetDataWriter();
-            NetDataWriter unreliableWriter = new NetDataWriter();
+            DataWriter reliableWriter = new DataWriter();
+            DataWriter reliableOrderedWriter = new DataWriter();
+            DataWriter unreliableWriter = new DataWriter();
             if (!differSendTypes)
             {
                 reliableOrderedWriter = reliableWriter;
@@ -168,7 +168,7 @@ namespace NetSyncLib.Helper
             ulong unreliableChanges = 0;
             foreach (NetPropertyPacket pp in this.propertyPackets)
             {
-                NetDataWriter writer;
+                DataWriter writer;
                 switch (pp.Attribute.NetSyncDeliveryMethod)
                 {
                     case NetSyncDeliveryMethod.ReliableOrdered:
@@ -231,7 +231,7 @@ namespace NetSyncLib.Helper
             if (!differSendTypes)
             {
                 ulong changes = reliableChanges + reliableOrderedChanges + unreliableChanges;
-                NetDataWriter differSendTypesWriter = new NetDataWriter();
+                DataWriter differSendTypesWriter = new DataWriter();
                 this.WriteChangesValue(changes, differSendTypesWriter);
                 differSendTypesWriter.Put(reliableOrderedWriter.Data, 0, reliableOrderedWriter.Length);
                 NetPacketHelperUpdate[] differUpdates = new NetPacketHelperUpdate[1];
@@ -240,22 +240,22 @@ namespace NetSyncLib.Helper
             }
 
             NetPacketHelperUpdate[] updates = new NetPacketHelperUpdate[3];
-            NetDataWriter dataWriter = new NetDataWriter();
+            DataWriter dataWriter = new DataWriter();
             this.WriteChangesValue(reliableOrderedChanges, dataWriter);
             dataWriter.Put(reliableOrderedWriter.Data, 0, reliableOrderedWriter.Length);
             updates[0] = new NetPacketHelperUpdate(reliableOrderedChanges != 0, NetSyncDeliveryMethod.ReliableOrdered, dataWriter);
-            dataWriter = new NetDataWriter();
+            dataWriter = new DataWriter();
             this.WriteChangesValue(reliableChanges, dataWriter);
             dataWriter.Put(reliableWriter.Data, 0, reliableWriter.Length);
             updates[1] = new NetPacketHelperUpdate(reliableChanges != 0, NetSyncDeliveryMethod.ReliableUnordered, dataWriter);
-            dataWriter = new NetDataWriter();
+            dataWriter = new DataWriter();
             this.WriteChangesValue(unreliableChanges, dataWriter);
             dataWriter.Put(unreliableWriter.Data, 0, unreliableWriter.Length);
             updates[2] = new NetPacketHelperUpdate(unreliableChanges != 0, NetSyncDeliveryMethod.Unreliable, dataWriter);
             return updates;
         }
 
-        public void ReceiveUpdate(NetDataReader reader)
+        public void ReceiveUpdate(DataReader reader)
         {
             ulong changes = this.ReadAndChangesValue(reader);
             if (changes == 0)
@@ -304,7 +304,7 @@ namespace NetSyncLib.Helper
             return (value & flag) != 0;
         }
 
-        private void WriteChangesValue(ulong changes, NetDataWriter writer)
+        private void WriteChangesValue(ulong changes, DataWriter writer)
         {
             switch (this.tagBitmaskType)
             {
@@ -325,7 +325,7 @@ namespace NetSyncLib.Helper
             }
         }
 
-        private ulong ReadAndChangesValue(NetDataReader reader)
+        private ulong ReadAndChangesValue(DataReader reader)
         {
             switch (this.tagBitmaskType)
             {

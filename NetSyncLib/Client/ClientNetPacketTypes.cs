@@ -18,13 +18,13 @@ namespace NetSyncLib.Client
 
         public static void SendSetPeerId(int id, IPeer peer)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeSetPeerId);
             writer.Put(id);
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered, new List<IPeer> { peer });
         }
 
-        public static void ReadSetPeerId(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadSetPeerId(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             int newId = reader.GetInt();
             if (NetOrganisator.NetPeerId != -2) Console.Error.WriteLine("Set peer id was called by the server but id was already set. " + $"OldId: {NetOrganisator.NetPeerId}, NewId: {newId}");
@@ -33,7 +33,7 @@ namespace NetSyncLib.Client
 
         public static void SendCreateINetObject(INetObject netObject, IEnumerable<IPeer> sendTo = null)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeCreateINetObject);
             writer.Put(NetOrganisator.ServerNetObjectHandler[netObject]);
             writer.Put(netObject.GetType().AssemblyQualifiedName);
@@ -41,7 +41,7 @@ namespace NetSyncLib.Client
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered, sendTo);
         }
 
-        public static void ReadCreateINetObject(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadCreateINetObject(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             Console.Write("Getting INetObject");
             ushort netId = reader.GetUShort();
@@ -56,13 +56,13 @@ namespace NetSyncLib.Client
 
         public static void SendDestroyINetObject(INetObject netObject)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeDestroyINetObject);
             writer.Put(NetOrganisator.ServerNetObjectHandler[netObject]);
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
-        public static void ReadDestroyINetObject(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadDestroyINetObject(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             Console.Write("Destroying INetObject");
             ushort netId = reader.GetUShort();
@@ -78,16 +78,16 @@ namespace NetSyncLib.Client
         /// <param name="writer"></param>
         /// <param name="deliveryMethod"></param>
         /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody.</param>
-        public static void SendUpdateINetObject(INetObject netObject, NetDataWriter writer, NetSyncDeliveryMethod deliveryMethod, IEnumerable<IPeer> sendTo = null)
+        public static void SendUpdateINetObject(INetObject netObject, DataWriter writer, NetSyncDeliveryMethod deliveryMethod, IEnumerable<IPeer> sendTo = null)
         {
-            NetDataWriter finalWriter = new NetDataWriter();
+            DataWriter finalWriter = new DataWriter();
             finalWriter.Put(TypeUpdateINetObject);
             finalWriter.Put(NetOrganisator.ServerNetObjectHandler[netObject]);
             finalWriter.Put(writer.Data, 0, writer.Length);
             NetOrganisator.Send(finalWriter, deliveryMethod, sendTo);
         }
 
-        public static void ReadUpdateINetObject(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
+        public static void ReadUpdateINetObject(DataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             ushort netId = reader.GetUShort();
             if (NetOrganisator.ClientNetObjectHandler.NetObjects.TryGetValue(netId, out INetObject netObject))
@@ -102,13 +102,13 @@ namespace NetSyncLib.Client
 
         public static void SendMessage(string message, IEnumerable<IPeer> sendTo = null)
         {
-            NetDataWriter writer = new NetDataWriter();
+            DataWriter writer = new DataWriter();
             writer.Put(TypeTextMessage);
             writer.Put(message);
             NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableUnordered, sendTo);
         }
 
-        public static void ReadMessage(NetDataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod)
+        public static void ReadMessage(DataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod)
         {
             Console.WriteLine(reader.GetString());
         }

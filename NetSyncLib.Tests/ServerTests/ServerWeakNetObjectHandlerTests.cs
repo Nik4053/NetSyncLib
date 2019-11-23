@@ -33,11 +33,11 @@ namespace NetSyncLib.Tests.ServerTests
             NetOrganisator.ResetNet();
             NetOrganisator.StartAsClient();
             ClientListener listener = new ClientListener();
-            listener.OnNetworkReceiveEvent(null, new NetDataReader(data), NetSyncDeliveryMethod.ReliableOrdered);
+            listener.OnNetworkReceiveEvent(null, new DataReader(data), NetSyncDeliveryMethod.ReliableOrdered);
             INetObject netObject2 = null;
             NetOrganisator.ClientNetObjectHandler.NetObjects.TryGetValue(id,out netObject2);
             Assert.AreEqual(9876, ((EmptyNetObject)netObject2).testInt);
-            listener.OnNetworkReceiveEvent(null, new NetDataReader(data2), NetSyncDeliveryMethod.ReliableOrdered);
+            listener.OnNetworkReceiveEvent(null, new DataReader(data2), NetSyncDeliveryMethod.ReliableOrdered);
             Assert.AreEqual(-6789, ((EmptyNetObject)netObject2).testInt);
 
 

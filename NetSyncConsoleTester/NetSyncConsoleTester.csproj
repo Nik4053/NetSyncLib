@@ -49,5 +49,19 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LiteNetLib-0.8\LiteNetLib\LiteNetLib.csproj">
+      <Project>{b0a014e4-0392-4e35-aa42-8fb5a40417e0}</Project>
+      <Name>LiteNetLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetSyncLib.Tests\NetSyncLib.Tests.csproj">
+      <Project>{18f00fe8-e7e0-4854-8d4b-2e9f8a611821}</Project>
+      <Name>NetSyncLib.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetSyncLib\NetSyncLib.csproj">
+      <Project>{658dafd0-e956-4129-b611-3717ecd6dbe0}</Project>
+      <Name>NetSyncLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -51,10 +51,10 @@
     <Compile Include="Client\ClientNetObjectHandler.cs" />
     <Compile Include="Client\ClientNetPacketTypes.cs" />
     <Compile Include="DelayedReaderHandler.cs" />
+    <Compile Include="Extras\DataReader.cs" />
+    <Compile Include="Extras\DataWriter.cs" />
     <Compile Include="Extras\FastBitConverter.cs" />
     <Compile Include="Extras\INetSerializable.cs" />
-    <Compile Include="Extras\NetDataReader.cs" />
-    <Compile Include="Extras\NetDataWriter.cs" />
     <Compile Include="Extras\RoundBased.cs" />
     <Compile Include="Helper\NetHelper.cs" />
     <Compile Include="Helper\MemberInfoExt.cs" />
