@@ -21,7 +21,7 @@ namespace NetSyncLib.Client
             NetDataWriter writer = new NetDataWriter();
             writer.Put(TypeSetPeerId);
             writer.Put(id);
-            peer.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
+            NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered, new List<IPeer> { peer });
         }
 
         public static void ReadSetPeerId(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
@@ -59,7 +59,7 @@ namespace NetSyncLib.Client
             NetDataWriter writer = new NetDataWriter();
             writer.Put(TypeDestroyINetObject);
             writer.Put(NetOrganisator.ServerNetObjectHandler[netObject]);
-            NetOrganisator.SendToAllClients(writer, NetSyncDeliveryMethod.ReliableOrdered);
+            NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
         public static void ReadDestroyINetObject(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)

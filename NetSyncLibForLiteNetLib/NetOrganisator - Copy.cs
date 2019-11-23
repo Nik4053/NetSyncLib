@@ -9,12 +9,11 @@ using System.Collections.Generic;
 
 namespace NetSyncLib
 {
-    public static class NetOrganisator
+    public static class NetOrganisatorBACKUP
     {
         /// <summary>
         /// Gets the netId of this application.
-        /// WARNING: the <see cref="IPeer.Id"/> is a ushort. This is only an int because we need negative values for non peer and also reach the ushort max limit with a now signed value.
-        /// -2 is offline, -1 is server, 0 -> <see cref="UInt16.MaxValue"/> is client.
+        /// -2 is offline, -1 is server, 0 -> is client.
         /// </summary>
         public static int NetPeerId { get; internal set; } = -2;
 
@@ -41,7 +40,18 @@ namespace NetSyncLib
             return NetState == ENetState.Client;
         }
 
-       
+        public static void ResendAllNetObjects(List<IPeer> peers = null)
+        {
+            if (NetState != ENetState.Server) return;
+
+            // TODO UpdateAllNetObjects
+            List<INetObject> netObjectList = ServerNetObjectHandler.GetAllKeys();
+            foreach (INetObject obj in netObjectList)
+            {
+                ClientNetPacketTypes.SendDestroyINetObject(obj);
+                ClientNetPacketTypes.SendCreateINetObject(obj, peers);
+            }
+        }
 
         /// <summary>
         /// The handler used for any output that needs to be send to the clients.
@@ -76,32 +86,61 @@ namespace NetSyncLib
             ClientNetObjectHandler = new ClientNetObjectHandler<INetObject>();
         }
 
-
-        /// <summary>
-        /// If Server: Will send data to the given peers. Leaving <see cref="sendTo"/> == null for sending to everyone.
-        /// <para></para>
-        /// If Client: Will send data to the server. Param <see cref="sendTo"/> will be ignored.
-        /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="options"></param>
-        /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody.</param>
-        public static void Send(NetDataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
+        internal static void SendToServer(NetDataWriter writer, NetSyncDeliveryMethod options)
         {
-            if (IsClient())
-            {
-                outputHandler(writer.Data, options, null);
-            }
-            else if(IsServer())
-            {
-                outputHandler(writer.Data, options, sendTo);
-            }
-            else
-            {
-                throw new InvalidOperationException("Cannot Send data while offline");
-            }
+            outputHandler(writer.Data, options);
+            Console.WriteLine($"OPTION: {options} \n DATA: " + writer.Data);
+            // Manager.FirstPeer.Send(writer, (LiteNetLib.DeliveryMethod)options);
         }
 
 
+        /// <summary>
+        /// Will send data to the given peers. Leaving <see cref="sendTo"/> == null will be the same as calling <see cref="SendToAll"/>.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="options"></param>
+        /// <param name="sendTo">The peers this message should be send to. If null it will be sent to everybody. If no content given data will not be send.</param>
+        public static void Send(NetDataWriter writer, NetSyncDeliveryMethod options, IEnumerable<IPeer> sendTo = null)
+        {
+
+            outputHandler(writer.Data, options);
+            return;
+            if (sendTo == null)
+            {
+                SendToAll(writer, options);
+                return;
+            }
+
+            foreach (IPeer peer in sendTo)
+            {
+                peer.Send(writer, options);
+            }
+        }
+
+        public static void SendToAll(NetDataWriter writer, NetSyncDeliveryMethod options)
+        {
+
+            outputHandler(writer.Data);
+            return;
+            switch (NetState)
+            {
+                case ENetState.Server:
+                    SendToAllClients(writer, options);
+                    break;
+
+                case ENetState.Client:
+                    SendToServer(writer, options);
+                    break;
+
+                default: return;
+            }
+        }
+
+        internal static void SendToAllClients(NetDataWriter writer, NetSyncDeliveryMethod options)
+        {
+            outputHandler(writer.Data, options);
+            //Manager.SendToAll(writer, options);
+        }
 
         public static void UpdateAllNetObjects()
         {
@@ -112,19 +151,6 @@ namespace NetSyncLib
             foreach (INetObject obj in netObjectList)
             {
                 obj.NetServerSendUpdate();
-            }
-        }
-
-        public static void ResendAllNetObjects(List<IPeer> peers = null)
-        {
-            if (NetState != ENetState.Server) return;
-
-            // TODO UpdateAllNetObjects
-            List<INetObject> netObjectList = ServerNetObjectHandler.GetAllKeys();
-            foreach (INetObject obj in netObjectList)
-            {
-                ClientNetPacketTypes.SendDestroyINetObject(obj);
-                ClientNetPacketTypes.SendCreateINetObject(obj, peers);
             }
         }
     }

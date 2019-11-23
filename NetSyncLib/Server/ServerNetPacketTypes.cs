@@ -22,7 +22,7 @@ namespace NetSyncLib.Server
             writer.Put(NetOrganisator.ClientNetObjectHandler.GetIdOfNetObject(netObject));
             writer.Put(netObject.OwnerId);
             writer.Put(dataWriter.Data, 0, dataWriter.Length);
-            NetOrganisator.SendToServer(writer, NetSyncDeliveryMethod.ReliableOrdered);
+            NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
         public static void ReadUpdateController(NetDataReader reader, IPeer peer, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
@@ -45,14 +45,14 @@ namespace NetSyncLib.Server
             NetDataWriter writer = new NetDataWriter();
             writer.Put(TypeTextMessage);
             writer.Put(message);
-            NetOrganisator.SendToServer(writer, NetSyncDeliveryMethod.ReliableUnordered);
+            NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableUnordered);
         }
 
         public static void ReadMessage(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
         {
             string message = reader.GetString();
-            string name = peer?.Name;
-            if (peer == null && NetOrganisator.IsServer()) name = "Server";
+            var name = peer.Id;
+            //if (peer == null && NetOrganisator.IsServer()) name = "Server";
             message = name + ": " + message;
             Console.WriteLine(message);
             ClientNetPacketTypes.SendMessage(message);
@@ -62,7 +62,7 @@ namespace NetSyncLib.Server
         {
             NetDataWriter writer = new NetDataWriter();
             writer.Put(TypeCloneAll);
-            NetOrganisator.SendToServer(writer, NetSyncDeliveryMethod.ReliableOrdered);
+            NetOrganisator.Send(writer, NetSyncDeliveryMethod.ReliableOrdered);
         }
 
         public static void ReadCloneAll(NetDataReader reader, IPeer peer = null, NetSyncDeliveryMethod deliveryMethod = NetSyncDeliveryMethod.Unreliable)
