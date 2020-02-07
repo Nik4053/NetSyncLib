@@ -41,8 +41,6 @@ namespace NetSyncLib
             return NetState == ENetState.Client;
         }
 
-       
-
         /// <summary>
         /// The handler used for any output that needs to be send to the clients.
         /// </summary>
@@ -50,7 +48,9 @@ namespace NetSyncLib
         /// <param name="deliveryMethod">How it should be send.</param>
         /// <param name="sendTo">List containing every Peer this data should be send to or Null if it should be send to everyone.</param>
         public delegate void OutputHandler(byte[] data, NetSyncDeliveryMethod deliveryMethod, IEnumerable<IPeer> sendTo);
-        public static OutputHandler outputHandler;
+
+        public static OutputHandler outputHandler { get; private set; }
+
         public static void StartAsServer(OutputHandler handler)
         {
             if (NetState != ENetState.Offline) throw new InvalidOperationException("Cannot start Server while there is an active connection of Type: " + NetState);
@@ -76,7 +76,6 @@ namespace NetSyncLib
             ClientNetObjectHandler = new ClientNetObjectHandler<INetObject>();
         }
 
-
         /// <summary>
         /// If Server: Will send data to the given peers. Leaving <see cref="sendTo"/> == null for sending to everyone.
         /// <para></para>
@@ -91,7 +90,7 @@ namespace NetSyncLib
             {
                 outputHandler(writer.CopyData(), options, null);
             }
-            else if(IsServer())
+            else if (IsServer())
             {
                 outputHandler(writer.CopyData(), options, sendTo);
             }
@@ -101,7 +100,20 @@ namespace NetSyncLib
             }
         }
 
+       // public static  HashSet<IPeer> Peers;
+        public static void InitNewPeer(IPeer peer)
+        {
 
+            //Console.WriteLine("Server: We got connection: {0}, Id will be: {1}", peer.EndPoint, peer.Id);
+            ClientNetPacketTypes.SendSetPeerId(peer.Id, peer);
+            NetOrganisator.ResendAllNetObjects(new List<IPeer> { peer }, false);
+            //if(Peers.Add(peer))
+            //{
+            //    Console.WriteLine("Warning. Tried to add new Peer that already was added");
+            //}
+        }
+
+        #region helpMethods
 
         public static void UpdateAllNetObjects()
         {
@@ -115,7 +127,7 @@ namespace NetSyncLib
             }
         }
 
-        public static void ResendAllNetObjects(List<IPeer> peers = null)
+        public static void ResendAllNetObjects(List<IPeer> peers = null, bool sendDestroyOld=true)
         {
             if (NetState != ENetState.Server) return;
 
@@ -123,9 +135,13 @@ namespace NetSyncLib
             List<INetObject> netObjectList = ServerNetObjectHandler.GetAllKeys();
             foreach (INetObject obj in netObjectList)
             {
-                ClientNetPacketTypes.SendDestroyINetObject(obj);
+                if (sendDestroyOld)
+                    ClientNetPacketTypes.SendDestroyINetObject(obj);
                 ClientNetPacketTypes.SendCreateINetObject(obj, peers);
             }
         }
+
+
+        #endregion
     }
 }

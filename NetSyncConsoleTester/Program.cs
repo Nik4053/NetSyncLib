@@ -2,6 +2,7 @@
 using LiteNetLib.Utils;
 using NetSyncLib;
 using NetSyncLib.Helper;
+using NetSyncLib.NetLibInterfaces;
 using NetSyncLib.Tests;
 using NetSyncLibForLiteNetLib.Client;
 using System;
@@ -165,7 +166,11 @@ namespace NetSyncConsoleTester
         {
             request.Accept();
             Console.WriteLine("Accepted Request");
-            NetOrganisator.ResendAllNetObjects();
+            NetOrganisator.InitNewPeer(new Peer {Id=2 });
         }
+    }
+    public class Peer : IPeer
+    {
+        public ushort Id { get; set; }
     }
 }
