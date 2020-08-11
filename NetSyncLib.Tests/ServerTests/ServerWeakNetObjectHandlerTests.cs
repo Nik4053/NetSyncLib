@@ -24,11 +24,11 @@ namespace NetSyncLib.Tests.ServerTests
             EmptyNetObject netObject = new EmptyNetObject();
             netObject.testInt = 9876;
             netObject.Register();
-            Byte[] data = DelayedReaderHandler.Read();
+            Byte[] data = DelayedReaderHandler.Read(); // read first send package of packet creation
             ushort id = NetOrganisator.ServerNetObjectHandler[netObject];
             netObject.testInt = -6789;
             netObject.NetServerSendUpdate();
-            Byte[] data2 = DelayedReaderHandler.Read();
+            Byte[] data2 = DelayedReaderHandler.Read(); // read package update
 
             NetOrganisator.ResetNet();
             NetOrganisator.StartAsClient();
